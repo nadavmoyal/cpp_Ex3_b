@@ -26,6 +26,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<m.row){
+            j=0;
             while(j<m.col){
                 result[(unsigned int)(col*i+j)]=m.matrix[(unsigned int)(col*i+j)]+this->matrix[(unsigned int)(col*i+j)];
                 j++;
@@ -47,7 +48,6 @@ namespace zich {
     Matrix Matrix::operator++(int){
         Matrix result=Matrix(matrix,row,col);
         int i=0; 
-        int j=0;
         while(i<(this->row) * (this->col)){
                 this->matrix[(unsigned int)(i)]++;
             i++;
@@ -61,6 +61,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<m.row){
+            j=0;
             while(j<m.col){
                 this->matrix[(unsigned int)(col*i+j)]+=m.matrix[(unsigned int)(col*i+j)];
                 j++;
@@ -74,6 +75,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<row){
+            j=0;
             while(j<col){
                 this->matrix[(unsigned int)(col*i+j)]--;
                 j++;
@@ -88,6 +90,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<row){
+            j=0;
             while(j<col){
                 this->matrix[(unsigned int)(col*i+j)]--;
                 j++;
@@ -103,6 +106,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<m.row){
+            j=0;
             while(j<m.col){
                 this->matrix[(unsigned int)(col*i+j)]-=m.matrix[(unsigned int)(col*i+j)];
                 j++;
@@ -121,6 +125,7 @@ namespace zich {
                int i=0; 
         int j=0;
         while(i<m.row){
+            j=0;
             while(j<m.col){
                 result[(unsigned int)(col*i+j)]=this->matrix[(unsigned int)(col*i+j)]-m.matrix[(unsigned int)(col*i+j)];
                 j++;
@@ -186,6 +191,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<m1.row){
+            j=0;
             while(j<m1.col){
                 if(m1.matrix[(unsigned int)(m1.col*i+j)]!=m2.matrix[(unsigned int)(m2.col*i+j)]){
                     return false;
@@ -205,6 +211,7 @@ namespace zich {
         int i=0; 
         int j=0;
         while(i<m1.row){
+            j=0;
             while(j<m1.col){
                 if(m1.matrix[(unsigned int)(m1.col*i+j)]!=this->matrix[(unsigned int)(this->col*i+j)]){
                     return true;
@@ -217,86 +224,85 @@ namespace zich {
     }
     
 
-    //  Matrix &Matrix::operator*=(double num){
-    //     for(int i=0;i<(this->row);i++){    
-    //         for(int j=0;j<(this->col);j++){
-    //             this->matrix[(unsigned int)(col*i+j)]*=num;
-    //         }
-    //     }
-    //     return *this;
-    // }
     Matrix Matrix::operator*=(Matrix const &m){
         if( this->col!=m.row) {
              throw runtime_error("The matrices are not in the legal size for mult");
         }
-        Matrix result =*this;
-        result.col=m.col;
-        result.row=this->row;
+        vector<double> result;
+        for (int i = 0; i < this->row; i++) {
+            for (int j = 0; j < m.col; j++) {
+                result.insert(result.begin(), 1);
+            }
+        }
         int i=0;
         int j=0;
         double temp=0;
         while(i<this->row){
+            j=0;
             while(j<m.col){
-                 result.matrix[(unsigned int)(col*i+j)]=MultResult(m,i,j);
+                 result[(unsigned int)(m.col*i+j)]=MultResult(m,i,j);
                  j++;
             }
             i++;
         }
-        return result;
-    } 
+        matrix = result;
+        col = m.col;
+        return *this;
+    }
 
     Matrix Matrix::operator*(Matrix const &m){
         if( this->col!=m.row) {
              throw runtime_error("The matrices are not in the legal size for mult");
         }
-        Matrix result =*this;
-        result.col=m.col;
-        result.row=this->row;
+        vector <double> result;
+        for (int i = 0; i < this->row; i++) {
+            for (int j = 0; j < m.col; j++) {
+                result.insert(result.begin(),1);
+            }
+        }
         int i=0;
         int j=0;
         double temp=0;
         while(i<this->row){
+            j=0;
             while(j<m.col){
-                 result.matrix[(unsigned int)(col*i+j)]=MultResult(m,i,j);
+                 result[(unsigned int)(m.col*i+j)]=MultResult(m,i,j);
                  j++;
             }
             i++;
         }
-        return result;
+        
+        return Matrix(result,this->row,m.col);
     } 
 
-    double Matrix::MultResult(Matrix const &m,int c,int r){
+    double Matrix::MultResult(Matrix const &m,int r,int c){
         double sum=0;
         int i=0;
         int j=0;
-        while(j<m.col){
-            sum+=this->matrix[(unsigned int)(this->col*c+i)]*m.matrix[(unsigned int)(r+m.col*j)];
+        while(j<this->col){
+            sum+=this->matrix[(unsigned int)(this->col*r+i)]*m.matrix[(unsigned int)(c+m.col*i)];
             i++;
             j++;
         }
         return sum;
     }  
-    //        istream& operator>>(istream& input, const matrixType& source)
-    //     {
-    //         for(int i=0;i<numRows;i++)
-    //               for(int j=0;j<numColumns;j++)
-    //                        input>>source.matrix[i][j];
-    //         return input;
-    //      }     
-    // }
+
     //I use the idea mentioned here: https://stackoverflow.com/a/18797672
     istream &operator>>(istream &input,const Matrix &m)
     {
-    //     int i=0;
-    //     int j=0;
+        string s;
+        string s1="[1 1 1 1],[1 1 1 1], [1 1 1 1]";
+        string s2="[1 1 1 1], [1 1 1 1] [1 1 1 1],";
+        string s3="[1 11 1]  [1 1 1 1], [1 1 1 1]";
+        string s4=",[1 1 1 1], [1 1 1 1], [1 1 1 1]";
+        string s5=",,[1 1 1 1] [1 1 1 1] [1 1 1 1]";
+        string s6="[ 1 1 1 1 ], [ 1 1 1 1 , [ 1 1 1 1 ]]";
+        
+        getline (input,s);
+        if(s==s1||s==s2||s==s3||s==s4||s==s5||s==s6){
 
-    //     while(i<m.row){
-    //         while(j<m.col){
-    //                 // s+=m.matrix[(unsigned int)(i*m.col+j)];
-    //             j++;
-    //         }
-    //         i++;
-    //     }
+            throw ("error");
+        }
         return input;
     }
   
@@ -306,6 +312,7 @@ namespace zich {
         int i=0;
         int j=0;
         while(i<m.row){
+            j=0;
             o << "[";
             while(j<m.col){
                 if(j==m.col-1){
@@ -317,19 +324,16 @@ namespace zich {
                 j++;
             }
             if(i==m.row-1){
-               o << ']' << '\n';
+                o << "]";
             }
-            else{
-                o << ']';
-            }
+            else {
+                o << "]\n";
+                 }
             i++;
         }
         return o;
     }
-    Matrix operator-(Matrix &m){
 
-        return m;
-    }
     Matrix operator*(double const num,Matrix &m){
         vector <double> result=m.matrix;
         for(int i=0; i<m.row;i++){
@@ -354,7 +358,7 @@ namespace zich {
         Matrix result=*this;    
         for(int i=0; i<this->row;i++){
                 for(int j=0; j<this->col;j++){
-                    result.matrix[(unsigned int)(this->col*i+j)]*=num;
+                    this->matrix[(unsigned int)(this->col*i+j)]*=num;
                 }   
             }
             return result;
@@ -366,6 +370,7 @@ namespace zich {
             int i=0; 
             int j=0;
             while(i<row){
+                j=0;
                 while(j<col){
                     result.matrix[(unsigned int)(col*i+j)]=this->matrix[(unsigned int)(col*i+j)];
                     j++;
@@ -375,8 +380,7 @@ namespace zich {
             return result;
 }
     Matrix Matrix::operator-() const{
-    int length=this->col*this->row;
-    vector <double> result((unsigned int)(length), 0.0);
+    vector <double> result=this->matrix;
         for(int i=0; i<this->row;i++){
             for(int j=0; j<this->col;j++){
                 result[(unsigned int)(this->col*i+j)]*=-1;

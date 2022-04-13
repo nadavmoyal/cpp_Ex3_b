@@ -36,7 +36,7 @@ public:
 
     friend ostream& operator<<(ostream &o, const Matrix &m);
     friend istream& operator>>(istream &input, const Matrix &m);
-    double MultResult(Matrix const &m,int col,int row);
+    double MultResult(Matrix const &m,int r,int c);
     // friend Matrix operator-(Matrix &m);
     // friend Matrix operator+(Matrix &m);
     Matrix operator+() ;
