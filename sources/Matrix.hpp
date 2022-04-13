@@ -19,12 +19,12 @@ public:
     ~Matrix();
     Matrix& operator+=(const Matrix &m);
     Matrix& operator++();
-    Matrix& operator++(const int num);
+    Matrix operator++(int);
     Matrix& operator--();
-    Matrix& operator--(const int num);
+    Matrix operator--(const int num) ;
     Matrix&operator-=(Matrix const &m);
     Matrix operator-(Matrix const &m);
-    double sumOfMatrix(const Matrix &m) const;
+    double sumOfMatrix() const;
     bool operator<(const Matrix &m) const;
     bool operator>(const Matrix &m) const;
     bool operator<=(const Matrix &m) const;
@@ -44,6 +44,7 @@ public:
     Matrix operator*(double const num) const;
     friend Matrix operator*(double const num,Matrix &m);
     Matrix operator*=(double const num);
+
 
 };
 }
