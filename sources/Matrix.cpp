@@ -276,18 +276,20 @@ namespace zich {
     } 
 
     double Matrix::MultResult(Matrix const &m,int r,int c){
+        if(m.col<1||m.row<1){
+            throw("Error Unsupported size");
+        }
         double sum=0;
         int i=0;
         int j=0;
         while(j<this->col){
-            sum+=this->matrix[(unsigned int)(this->col*r+i)]*m.matrix[(unsigned int)(c+m.col*i)];
+            sum+=this->matrix[(unsigned int)(this->col*r+i)]*m.matrix[(unsigned int)(c+m.col*j)];
             i++;
             j++;
         }
         return sum;
     }  
 
-    //I use the idea mentioned here: https://stackoverflow.com/a/18797672
     istream &operator>>(istream &input,const Matrix &m)
     {
         string s;
@@ -309,12 +311,17 @@ namespace zich {
 
     //I use the idea mentioned here: https://stackoverflow.com/a/44886537
     ostream &operator<<(ostream &o, const Matrix &m){ 
+        if(m.col<1||m.row<1){
+            throw("Error Unsupported size");
+        }
         int i=0;
         int j=0;
         while(i<m.row){
             j=0;
-            o << "[";
             while(j<m.col){
+                if(j==0){
+                    o << "[";
+                }
                 if(j==m.col-1){
                     o << m.matrix[(unsigned int)(i*m.col+j)];
                 }
@@ -338,7 +345,7 @@ namespace zich {
         vector <double> result=m.matrix;
         for(int i=0; i<m.row;i++){
             for(int j=0; j<m.col;j++){
-                result[(unsigned int)(m.col*i+j)]=num*result[(unsigned int)(m.col*i+j)];
+                result[(unsigned int)(m.col*i+j)]*=num;
             }   
         }
         Matrix res(result,m.row, m.col);
